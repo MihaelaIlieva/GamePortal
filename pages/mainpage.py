@@ -1,5 +1,6 @@
 import pygame
 import sys
+import loginpage
 
 pygame.init()
 
@@ -102,6 +103,7 @@ class MainPage:
         #TODO create the login page and here redirect it
         #remove the line when ready, now just turns the background when ready
         self.screen.fill(WHITE)
+        loginpage.LoginPage()
 
     def open_register_page(self):
         #TODO create the register page and redirect it here
