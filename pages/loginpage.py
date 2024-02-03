@@ -1,5 +1,7 @@
 import pygame
 import sys
+# from ..database import basicqueries
+import database.basicqueries as basicqueries
 
 pygame.init()
 
@@ -112,6 +114,12 @@ class LoginPage:
 
         #print(f"Username: {username}, Password: {password}") 
         #TODO check if they are in the database and if they are redirect to the game portal page
+        if len(basicqueries.check_for_same_username(username)) == 0:
+            basicqueries.add_user(username,password)
+            print("No such user!")
+        else:
+            result = basicqueries.check_for_same_username(username)[0][0]
+            print("User with id {result} in database".format(result=result))
 
     def draw_text(self, text, x, y):
         text_surface = font.render(text, True, WHITE)

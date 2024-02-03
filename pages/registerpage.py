@@ -1,5 +1,7 @@
 import pygame
 import sys
+import database.basicqueries as basicqueries
+import mainpage
 
 pygame.init()
 
@@ -112,6 +114,13 @@ class RegisterPage:
 
         #print(f"Username: {username}, Password: {password}") 
         #TODO check if they are in the database and if they are redirect to the game portal page
+        if len(basicqueries.check_for_same_username(username)) == 0:
+            basicqueries.add_user(username,password)
+            print("Successfull registration!")
+            pygame.time.delay(3000)
+            mainpage.MainPage()
+        else:
+            print("There is a user with the same username, think of a new one")
 
     def draw_text(self, text, x, y):
         text_surface = font.render(text, True, WHITE)
