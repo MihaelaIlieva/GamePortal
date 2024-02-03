@@ -3,7 +3,8 @@ import sys
 import loginpage
 import registerpage
 import database.basicqueries as basicqueries
-
+import tkinter
+import games.main as getrich
 pygame.init()
 
 WIDTH, HEIGHT = 1720, 980
@@ -73,7 +74,7 @@ class ProfilePage:
                     running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if hover_get_rich:
-                        # self.open_get_rich_page()
+                        self.open_get_rich_page()
                         return
                     elif hover_tictactoe:
                         return
@@ -102,6 +103,10 @@ class ProfilePage:
         text_surface = subfont.render(text, True, WHITE)
         text_rect = text_surface.get_rect(center=(x, y))
         self.screen.blit(text_surface, text_rect)
+
+    def open_get_rich_page(self):
+        # getrich
+        pass
 
 if __name__ == "__main__":
     main_page = ProfilePage()
