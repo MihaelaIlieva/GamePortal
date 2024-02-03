@@ -2,6 +2,7 @@ import pygame
 import sys
 # from ..database import basicqueries
 import database.basicqueries as basicqueries
+import mainpage
 
 pygame.init()
 
@@ -69,7 +70,8 @@ class LoginPage:
         self.username_input = InputBox(WIDTH//2 - 100, HEIGHT//2 - 65, 200, 40, '')
         self.password_input = InputBox(WIDTH//2 - 100, HEIGHT//2, 200, 40, '')
         self.login_button = Button("Login", WIDTH // 2 - 75, HEIGHT // 2 + 55, 150, 40, self.login)
-        self.text = "Please put in your credentials" 
+        self.text = "Please put in your credentials"
+        self.error_message = None
         self.main_loop()
 
     def main_loop(self):
@@ -102,6 +104,9 @@ class LoginPage:
             hover_login = self.login_button.rect.collidepoint(pygame.mouse.get_pos())
             self.login_button.draw(self.screen, hover_login)
 
+            if self.error_message:
+                self.draw_text(self.error_message, WIDTH // 2, HEIGHT // 2 + 105)
+
             pygame.display.flip()
             clock.tick(FPS)
 
@@ -112,20 +117,48 @@ class LoginPage:
         username = self.username_input.get_text()
         password = self.password_input.get_text()
 
-        #print(f"Username: {username}, Password: {password}") 
-        #TODO check if they are in the database and if they are redirect to the game portal page
+        # if there's no such username in the database
         if len(basicqueries.check_for_same_username(username)) == 0:
-            basicqueries.add_user(username,password)
+            self.error_message = "No such user!"
             print("No such user!")
         else:
-            result = basicqueries.check_for_same_username(username)[0][0]
-            print("User with id {result} in database".format(result=result))
+            user_id = basicqueries.check_for_same_username(username)[0][0]
+            result = basicqueries.get_user_credentials(user_id)
+            # if both username and password match
+            if result[0] == (username, password):
+                self.error_message = "Successfull login!"
+                self.update_screen()
+                pygame.time.delay(1000)
+                #TODO add real refernce here
+                mainpage.MainPage()
+                print("Successfull login!")
+            else:
+                self.error_message = "Wrong password!"
+                print("Wrong password!")
 
     def draw_text(self, text, x, y):
         text_surface = font.render(text, True, WHITE)
         text_rect = text_surface.get_rect(center=(x, y))
         self.screen.blit(text_surface, text_rect)
 
+    # for when the error message changes
+    def update_screen(self):
+        self.screen.blit(self.background, (0, 0))
+
+        self.draw_text(self.text, WIDTH // 2, HEIGHT // 4)
+        self.draw_text("Username", WIDTH//2, HEIGHT//2 - 85)
+        self.draw_text("Password", WIDTH//2, HEIGHT//2 - 15)
+
+        self.username_input.draw(self.screen)
+        self.password_input.draw(self.screen)
+
+        hover_login = self.login_button.rect.collidepoint(pygame.mouse.get_pos())
+        self.login_button.draw(self.screen, hover_login)
+
+        if self.error_message:
+            self.draw_text(self.error_message, WIDTH // 2, HEIGHT // 2 + 105)
+
+        pygame.display.flip()
 
 class Button:
 

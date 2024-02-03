@@ -15,3 +15,21 @@ def check_for_same_username(username):
     connection.commit()
     connection.close()
     return result
+
+def get_user_credentials(id):
+    connection = sqlite3.connect('database/game_portal.db')
+    cursor = connection.cursor()
+    cursor.execute('''SELECT username, password from users WHERE id=?''',(id,))
+    result = cursor.fetchall()
+    connection.commit()
+    connection.close()
+    return result
+
+def get_all_users():
+    connection = sqlite3.connect('database/game_portal.db')
+    cursor = connection.cursor()
+    cursor.execute('''SELECT * from users''')
+    result = cursor.fetchall()
+    connection.commit()
+    connection.close()
+    return result

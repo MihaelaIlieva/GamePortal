@@ -2,6 +2,7 @@ import pygame
 import sys
 import loginpage
 import registerpage
+import database.basicqueries as basicqueries
 
 pygame.init()
 
@@ -101,15 +102,9 @@ class MainPage:
         self.screen.blit(text_surface, text_rect)
 
     def open_login_page(self):
-        #TODO create the login page and here redirect it
-        #remove the line when ready, now just turns the background when ready
-        self.screen.fill(WHITE)
         loginpage.LoginPage()
 
     def open_register_page(self):
-        #TODO create the register page and redirect it here
-        #remove the line when ready, now just turns the background when ready
-        self.screen.fill(WHITE)
         registerpage.RegisterPage()
 
 if __name__ == "__main__":

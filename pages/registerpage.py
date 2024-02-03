@@ -1,7 +1,7 @@
 import pygame
 import sys
 import database.basicqueries as basicqueries
-import mainpage
+import loginpage
 
 pygame.init()
 
@@ -70,6 +70,7 @@ class RegisterPage:
         self.password_input = InputBox(WIDTH//2 - 100, HEIGHT//2, 200, 40, '')
         self.register_button = Button("Register", WIDTH // 2 - 75, HEIGHT // 2 + 55, 150, 40, self.register)
         self.text = "Please put in your wanted credentials" 
+        self.error_message = None
         self.main_loop()
 
     def main_loop(self):
@@ -84,7 +85,6 @@ class RegisterPage:
                 self.password_input.handle_event(event)
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.register_button.rect.collidepoint(event.pos):
-                        #TODO write the method
                         self.register()
 
             self.username_input.update()
@@ -102,6 +102,8 @@ class RegisterPage:
             hover_register = self.register_button.rect.collidepoint(pygame.mouse.get_pos())
             self.register_button.draw(self.screen, hover_register)
 
+            if self.error_message:
+                self.draw_text(self.error_message, WIDTH // 2, HEIGHT // 2 + 105)
             pygame.display.flip()
             clock.tick(FPS)
 
@@ -111,15 +113,17 @@ class RegisterPage:
     def register(self):
         username = self.username_input.get_text()
         password = self.password_input.get_text()
-
-        #print(f"Username: {username}, Password: {password}") 
-        #TODO check if they are in the database and if they are redirect to the game portal page
+ 
+        # if there is no such username
         if len(basicqueries.check_for_same_username(username)) == 0:
             basicqueries.add_user(username,password)
             print("Successfull registration!")
-            pygame.time.delay(3000)
-            mainpage.MainPage()
+            self.error_message = "Successfull registration! Please login now!"
+            self.update_screen()
+            pygame.time.delay(1500)
+            loginpage.LoginPage()
         else:
+            self.error_message = "There is a user with the same username, think of a new one!"
             print("There is a user with the same username, think of a new one")
 
     def draw_text(self, text, x, y):
@@ -127,6 +131,24 @@ class RegisterPage:
         text_rect = text_surface.get_rect(center=(x, y))
         self.screen.blit(text_surface, text_rect)
 
+    # for when the error message changes
+    def update_screen(self):
+        self.screen.blit(self.background, (0, 0))
+
+        self.draw_text(self.text, WIDTH // 2, HEIGHT // 4)
+        self.draw_text("Username", WIDTH//2, HEIGHT//2 - 85)
+        self.draw_text("Password", WIDTH//2, HEIGHT//2 - 15)
+
+        self.username_input.draw(self.screen)
+        self.password_input.draw(self.screen)
+
+        hover_register = self.register_button.rect.collidepoint(pygame.mouse.get_pos())
+        self.register_button.draw(self.screen, hover_register)
+
+        if self.error_message:
+            self.draw_text(self.error_message, WIDTH // 2, HEIGHT // 2 + 105)
+
+        pygame.display.flip()
 
 class Button:
 
