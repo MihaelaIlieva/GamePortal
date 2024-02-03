@@ -3,8 +3,13 @@ import sys
 # from ..database import basicqueries
 import database.basicqueries as basicqueries
 import mainpage
+import profilepage
 
 pygame.init()
+
+# so we can have them throught the whole process
+username = ""
+password = ""
 
 WIDTH, HEIGHT = 1720, 980
 FPS = 60
@@ -130,7 +135,7 @@ class LoginPage:
                 self.update_screen()
                 pygame.time.delay(1000)
                 #TODO add real refernce here
-                mainpage.MainPage()
+                profilepage.ProfilePage()
                 print("Successfull login!")
             else:
                 self.error_message = "Wrong password!"
