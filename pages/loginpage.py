@@ -135,7 +135,7 @@ class LoginPage:
                 self.update_screen()
                 pygame.time.delay(1000)
                 #TODO add real refernce here
-                profilepage.ProfilePage()
+                profilepage.ProfilePage(username, password)
                 print("Successfull login!")
             else:
                 self.error_message = "Wrong password!"

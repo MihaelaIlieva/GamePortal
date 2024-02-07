@@ -4,11 +4,13 @@ import loginpage
 import registerpage
 import database.basicqueries as basicqueries
 import tkinter
-import games.main as getrich
+import main as getrich
 pygame.init()
 
 WIDTH, HEIGHT = 1720, 980
 FPS = 60
+username = ""
+password = ""
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -47,7 +49,7 @@ class Button:
 
 class ProfilePage:
 
-    def __init__(self):
+    def __init__(self, username, password):
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Game Portal - Profile Page")
 
@@ -57,8 +59,15 @@ class ProfilePage:
         self.get_rich_button = Button("Get rich","", WIDTH // 2 - 100, HEIGHT // 2 - 30, 150, 40)
         self.tictactoe_button = Button("TicTacToe","", WIDTH // 2 - 100, HEIGHT // 2 + 65, 150, 40)
 
-        self.text = "Welcome {username}! What will it be today?".format(username=loginpage.username)
+        self.username = username
+        self.password = password
+        username=username
+        password=password
+
+        self.text = "Welcome {username}! What will it be today?".format(username=self.username)
         self.subtext = ""
+
+        
         self.main_loop()
 
     def main_loop(self):
@@ -105,8 +114,7 @@ class ProfilePage:
         self.screen.blit(text_surface, text_rect)
 
     def open_get_rich_page(self):
-        # getrich
-        pass
+        getrich
 
 if __name__ == "__main__":
-    main_page = ProfilePage()
+    main_page = ProfilePage(username, password)
