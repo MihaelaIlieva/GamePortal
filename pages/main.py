@@ -92,10 +92,10 @@ def create_questions_frame(game_frame, first_question_package):
     number_of_question.place(x=447, y=177.5)
     return questions_frame
 
-def create_money_frame(root):
+def create_money_frame(root, image_sum):
     money_frame = Frame(root, bg=MAIN_COLOUR, padx=55, pady=45)
     money_frame.grid(row=0, column=1)
-    money_frame_label = Label(money_frame, image=first_sum, bg=MAIN_COLOUR, width=250, height=750)
+    money_frame_label = Label(money_frame, image=image_sum, bg=MAIN_COLOUR, width=275, height=750)
     money_frame_label.grid(row=0, column=0)
     return money_frame
 
@@ -106,6 +106,8 @@ def on_button_click(button_number):
 
 def reset_timer():
     global timer_seconds
+    if hasattr(root, 'timer_id'):
+        root.after_cancel(root.timer_id)
     timer_seconds = TIMER_DURATION
     update_timer()
 
@@ -121,11 +123,11 @@ def show_timeout_popup():
         
 
 def update_timer():
-    global timer_seconds, easy_questions, medium_questions, hard_questions
+    global timer_seconds
     timer_label.config(text=f"Time left: {timer_seconds} seconds")
     if timer_seconds > 0:
         timer_seconds -= 1
-        root.after(1000, update_timer)
+        root.timer_id = root.after(1000, update_timer)
     else:
         show_timeout_popup()
 
@@ -139,6 +141,41 @@ def get_new_question():
         new_question = hard_questions[questions_answered-10]
     create_questions_frame(game_frame, new_question)
 
+def change_money_picture():
+    global questions_answered
+    match questions_answered:
+        case 0:
+            image = first_sum
+        case 1:
+            image = second_sum
+        case 2:
+            image = third_sum
+        case 3:
+            image = fourth_sum
+        case 4:
+            image = fifth_sum
+        case 5:
+            image = sixth_sum
+        case 6:
+            image = seventh_sum
+        case 7:
+            image = eight_sum
+        case 8:
+            image = ninght_sum
+        case 9:
+            image = tenth_sum
+        case 10:
+            image = eleventh_sum
+        case 11:
+            image = twelfth_sum
+        case 12:
+            image = thirteenth_sum
+        case 13:
+            image = fourteenth_sum
+        case 14:
+            image = fifteenth_sum
+    create_money_frame(root, image)
+
 
 def mark_answer(event):
     global questions_answered
@@ -150,6 +187,8 @@ def mark_answer(event):
         print("Correct!")
         questions_answered += 1
         if questions_answered < 15:
+            reset_timer()
+            change_money_picture()
             get_new_question()
         else:
             pass
@@ -222,7 +261,7 @@ if __name__ == "__main__":
     hints_frame = create_hints_frame(game_frame)
     logo_frame = create_logo_frame(game_frame)
     questions_frame = create_questions_frame(game_frame, first_question_package)
-    money_frame = create_money_frame(root)
+    money_frame = create_money_frame(root, first_sum)
 
     timer_seconds = TIMER_DURATION
     timer_label = Label(root, text=f"Time left: {timer_seconds} seconds", font=(None, 16), bg=MAIN_COLOUR, fg="white")
