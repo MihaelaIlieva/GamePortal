@@ -6,9 +6,7 @@ import random
 
 current_question = ""
 questions_answered = 0
-easy_questions = []
-medium_questions = []
-hard_questions = []
+new_root = None
 
 def create_main_window():
     root = Tk()
@@ -50,7 +48,6 @@ def create_questions_frame(game_frame, first_question_package):
     questions_frame_label = Label(questions_frame, image=question_picture, bg=MAIN_COLOUR, width = 950, height=300)
     questions_frame_label.grid(row=0, column=0)
 
-    #TODO: make it fit in the question bubble and don't forget to disable the writing of the user
     question = Text(questions_frame, font=(None,20), width=49, height=2.50, bg=QUESTIONS_COLOUR, bd=0, wrap="word", state="normal", fg="white")
     question.place(x=100, y=8.50)
     question.insert("1.0", first_question_package[1])
@@ -73,8 +70,6 @@ def create_questions_frame(game_frame, first_question_package):
     first_button = Button(questions_frame, text=answers[0], font=(None,16), bd=0, bg=QUESTIONS_COLOUR, fg='white', activebackground=QUESTIONS_COLOUR, activeforeground='white', cursor='hand1')
     first_button.place(x=130, y=145)
     first_button.bind('<ButtonRelease-1>', mark_answer)
-    # first_button.bind('<Enter>', change_letter_colour(first_label, 'white'))
-    # first_button.bind('<Leave>', change_letter_colour(first_label, OPTIONS_COLOUR))
 
     second_button = Button(questions_frame, text=answers[1], font=(None,16), bd=0, bg=QUESTIONS_COLOUR, fg='white', activebackground=QUESTIONS_COLOUR, activeforeground='white', cursor='hand1')
     second_button.place(x=570, y=145)
@@ -98,11 +93,6 @@ def create_money_frame(root, image_sum):
     money_frame_label = Label(money_frame, image=image_sum, bg=MAIN_COLOUR, width=275, height=750)
     money_frame_label.grid(row=0, column=0)
     return money_frame
-
-#TODO: implement it
-def on_button_click(button_number):
-    reset_timer()
-    print(f"Button {button_number} clicked!")
 
 def reset_timer():
     global timer_seconds
@@ -130,6 +120,10 @@ def update_timer():
         root.timer_id = root.after(1000, update_timer)
     else:
         show_timeout_popup()
+
+def stop_timer():
+    if hasattr(root, 'timer_id'):
+        root.after_cancel(root.timer_id)
 
 def get_new_question():
     global questions_answered
@@ -176,6 +170,56 @@ def change_money_picture():
             image = fifteenth_sum
     create_money_frame(root, image)
 
+def try_again():
+    global questions_answered, easy_questions, new_root
+    questions_answered = 0
+    random.shuffle(easy_questions)
+    random.shuffle(medium_questions)
+    random.shuffle(hard_questions)
+    reset_timer()
+    new_question_package = easy_questions[len(easy_questions)-1]  # Get a new first question
+    create_questions_frame(game_frame, new_question_package)
+    create_money_frame(root, first_sum)
+    new_root.destroy()
+
+def back_to_profile():
+    #TODO: redirect to profilepage
+    root.destroy()
+    pass
+
+def game_over():
+    global new_root
+    #TODO: add result to database
+
+    stop_timer()
+    new_root = Toplevel()
+    new_root.config(bg=WRONG_ANSWER_COLOUR)
+    new_root.geometry('375x325+600+350')
+    new_root.title("Game over")
+    losing_message = Label(new_root, image=losing_picture, bd=0)
+    losing_message.pack()
+
+    try_again_button = Button(new_root, text="Нова игра", font=(None,16,'bold'), bg=WRONG_ANSWER_COLOUR, fg='white', bd=0, activebackground=WRONG_ANSWER_COLOUR, activeforeground='white', cursor='hand1', command=try_again)
+    try_again_button.pack()
+    back_to_profile_button = Button(new_root, text="Към профила ми", font=(None,16,'bold'), bg=WRONG_ANSWER_COLOUR, fg='white', bd=0, activebackground=WRONG_ANSWER_COLOUR, activeforeground='white', cursor='hand1', command=back_to_profile)
+    back_to_profile_button.pack()
+
+def win_game():
+    global new_root
+    #TODO: add result to database
+
+    stop_timer()
+    new_root = Toplevel()
+    new_root.config(bg=WRONG_ANSWER_COLOUR)
+    new_root.geometry('525x625+600+235')
+    new_root.title("Game won")
+    losing_message = Label(new_root, image=winning_picture, bd=0)
+    losing_message.pack()
+
+    try_again_button = Button(new_root, text="Нова игра", font=(None,16,'bold'), bg=WRONG_ANSWER_COLOUR, fg='white', bd=0, activebackground=WRONG_ANSWER_COLOUR, activeforeground='white', cursor='hand1', command=try_again)
+    try_again_button.pack()
+    back_to_profile_button = Button(new_root, text="Към профила ми", font=(None,16,'bold'), bg=WRONG_ANSWER_COLOUR, fg='white', bd=0, activebackground=WRONG_ANSWER_COLOUR, activeforeground='white', cursor='hand1', command=back_to_profile)
+    back_to_profile_button.pack()
 
 def mark_answer(event):
     global questions_answered
@@ -191,12 +235,10 @@ def mark_answer(event):
             change_money_picture()
             get_new_question()
         else:
-            pass
-            # win_game()
+            win_game()
     else:
         print("Incorrect!")
-        pass
-        # lose_game()
+        game_over()
         # save_progress()
         # open_profile_page()
 
@@ -210,6 +252,7 @@ if __name__ == "__main__":
     MAIN_COLOUR = '#160559'
     QUESTIONS_COLOUR = '#233e91'
     OPTIONS_COLOUR = '#ffb300'
+    WRONG_ANSWER_COLOUR = '#101248'
     TIMER_DURATION = 60
 
     questions_answered = 0
@@ -256,6 +299,10 @@ if __name__ == "__main__":
 
     #Question options picture
     question_picture = PhotoImage(file='images/question.png')
+
+    #
+    winning_picture = PhotoImage(file='images/winning.png')
+    losing_picture = PhotoImage(file='images/losing.png')
     
     game_frame = create_game_frame(root)
     hints_frame = create_hints_frame(game_frame)
