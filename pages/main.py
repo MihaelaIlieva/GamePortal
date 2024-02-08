@@ -4,6 +4,7 @@ import profilepage
 from database import basicqueries
 import random
 from tkinter.ttk import Progressbar
+import openai
 
 current_question = ""
 first_answer = ""
@@ -18,6 +19,11 @@ first_button = None
 second_button = None
 third_button = None
 fourth_button = None
+callafriend_button = None
+input_window = None
+#Removed for safety reasons
+openai.api_key = 'my_api_key'
+
 
 def create_main_window():
     root = Tk()
@@ -32,7 +38,7 @@ def create_game_frame(root):
     return game_frame
 
 def create_hints_frame(game_frame):
-    global public_button, fiftyfifty_button
+    global public_button, fiftyfifty_button, callafriend_button
     hints_frame = Frame(game_frame, bg=MAIN_COLOUR, pady=35)
     hints_frame.grid(row=0, column=0)
 
@@ -42,7 +48,7 @@ def create_hints_frame(game_frame):
     fiftyfifty_button = Button(hints_frame, image=unused_fiftyfifty, bg=MAIN_COLOUR, bd=0.5, activebackground=MAIN_COLOUR, width=110, height=65, cursor='hand1', command=use_fifty_fifty)
     fiftyfifty_button.grid(row=0, column=1, padx=10)
 
-    callafriend_button = Button(hints_frame, image=unused_callafriend, bg=MAIN_COLOUR, bd=0.5, activebackground=MAIN_COLOUR, width=110, height=65, cursor='hand1')
+    callafriend_button = Button(hints_frame, image=unused_callafriend, bg=MAIN_COLOUR, bd=0.5, activebackground=MAIN_COLOUR, width=110, height=65, cursor='hand1', command=use_call_a_friend)
     callafriend_button.grid(row=0, column=2, padx=10)
     return hints_frame
 
@@ -139,6 +145,18 @@ def get_random_percentages():
     fourth_number = 100 - (first_number + second_number + third_number)
     return first_number, second_number, third_number, fourth_number
 
+def chat_with_gpt(prompt):
+    model_name = "gpt-3.5-turbo"
+
+    response = openai.ChatCompletion.create(
+        model=model_name,
+        messages=[
+            {"role": "system", "content": "You: " + prompt},
+        ],
+        max_tokens=150
+    )
+    return response['choices'][0]['message']['content']
+
 def use_public():
     global public_button
     public_button.config(state='disabled', image=used_public)
@@ -225,6 +243,42 @@ def use_fifty_fifty():
         third_button.config(state='disabled', text="")
     if 4 in options_to_eliminate:
         fourth_button.config(state='disabled', text="")
+
+def use_call_a_friend():
+    global callafriend_button, input_window
+    callafriend_button.config(state='disabled', image=used_callafriend)
+
+    def get_response():
+        user_question = question_entry.get()
+
+        try:
+            response = chat_with_gpt(user_question)
+            response_text.config(state='normal')
+            response_text.insert("1.0", "")
+            response_text.insert("1.0", response)
+            response_text.config(state='disabled')
+
+        except openai.error.RateLimitError:
+            response_text.config(state='normal')
+            response_text.insert("1.0", "")
+            response_text.insert("1.0", "API rate limit exceeded. Please try again later.")
+            response_text.config(state='disabled')
+
+    input_window = Tk()
+    input_window.title("Помощ от приятел")
+    input_window.geometry('700x350+500+235')
+    input_window.config(bg='white')
+    
+    question_entry = Entry(input_window, width=50)
+    question_entry.pack(pady=10)
+
+    submit_button = Button(input_window, text="Попитай", command=get_response)
+    submit_button.pack(pady=10)
+
+    response_text = Text(input_window, font=(None,12), width=35, height=15, bd=0, wrap="word", state="disabled", fg="black")
+    response_text.pack()
+
+    input_window.mainloop()
 
 def reset_timer():
     global timer_seconds
@@ -353,8 +407,9 @@ def win_game():
     back_to_profile_button.pack()
 
 def mark_answer(event):
-    global questions_answered
+    global questions_answered, input_window
     remove_public_answers()
+    input_window.destroy()
     button_marked = event.widget
     if button_marked['state'] != 'disabled':
         button_answer = button_marked['text']
@@ -434,6 +489,9 @@ if __name__ == "__main__":
     #States pictures
     winning_picture = PhotoImage(file='images/winning.png')
     losing_picture = PhotoImage(file='images/losing.png')
+
+    #Friend picture
+    friend_picture = PhotoImage(file='images/friendpicture.png')
     
     game_frame = create_game_frame(root)
     hints_frame = create_hints_frame(game_frame)
