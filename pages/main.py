@@ -3,10 +3,16 @@ from tkinter import messagebox
 import profilepage
 from database import basicqueries
 import random
+from tkinter.ttk import Progressbar
 
 current_question = ""
+first_answer = ""
+second_answer = ""
+third_answer = ""
+fourth_answer = ""
 questions_answered = 0
 new_root = None
+public_button = None
 
 def create_main_window():
     root = Tk()
@@ -21,10 +27,11 @@ def create_game_frame(root):
     return game_frame
 
 def create_hints_frame(game_frame):
+    global public_button
     hints_frame = Frame(game_frame, bg=MAIN_COLOUR, pady=35)
     hints_frame.grid(row=0, column=0)
 
-    public_button = Button(hints_frame, image=unused_public, bg=MAIN_COLOUR, bd=0.5, activebackground=MAIN_COLOUR, width=110, height=65, cursor='hand1')
+    public_button = Button(hints_frame, image=unused_public, bg=MAIN_COLOUR, bd=0.5, activebackground=MAIN_COLOUR, width=110, height=65, cursor='hand1', command=use_public)
     public_button.grid(row=0, column=0, padx=10)
 
     fiftyfifty_button = Button(hints_frame, image=unused_fiftyfifty, bg=MAIN_COLOUR, bd=0.5, activebackground=MAIN_COLOUR, width=110, height=65, cursor='hand1')
@@ -42,7 +49,7 @@ def create_logo_frame(game_frame):
     return logo_frame
 
 def create_questions_frame(game_frame, first_question_package):
-    global current_question, questions_answered
+    global current_question, questions_answered, first_answer, second_answer, third_answer, fourth_answer
     questions_frame = Frame(game_frame, bg=MAIN_COLOUR, pady=35)
     questions_frame.grid(row=2, column=0)
     questions_frame_label = Label(questions_frame, image=question_picture, bg=MAIN_COLOUR, width = 950, height=300)
@@ -70,29 +77,122 @@ def create_questions_frame(game_frame, first_question_package):
     first_button = Button(questions_frame, text=answers[0], font=(None,16), bd=0, bg=QUESTIONS_COLOUR, fg='white', activebackground=QUESTIONS_COLOUR, activeforeground='white', cursor='hand1')
     first_button.place(x=130, y=145)
     first_button.bind('<ButtonRelease-1>', mark_answer)
+    first_answer = answers[0]
 
     second_button = Button(questions_frame, text=answers[1], font=(None,16), bd=0, bg=QUESTIONS_COLOUR, fg='white', activebackground=QUESTIONS_COLOUR, activeforeground='white', cursor='hand1')
     second_button.place(x=570, y=145)
     second_button.bind('<ButtonRelease-1>', mark_answer)
+    second_answer = answers[1]
 
     third_button = Button(questions_frame, text=answers[2], font=(None,16), bd=0, bg=QUESTIONS_COLOUR, fg='white', activebackground=QUESTIONS_COLOUR, activeforeground='white', cursor='hand1')
     third_button.place(x=130, y=225)
     third_button.bind('<ButtonRelease-1>', mark_answer)
+    third_answer = answers[2]
 
     fourth_button = Button(questions_frame, text=answers[3], font=(None,16), bd=0, bg=QUESTIONS_COLOUR, fg='white', activebackground=QUESTIONS_COLOUR, activeforeground='white', cursor='hand1')
     fourth_button.place(x=570, y=225)
     fourth_button.bind('<ButtonRelease-1>', mark_answer)
+    fourth_answer = answers[3]
 
     number_of_question = Label(questions_frame, text=str(questions_answered+1), font=(None, 16, 'bold'), bg=MAIN_COLOUR, fg='white', width=4, height=2)
     number_of_question.place(x=447, y=177.5)
     return questions_frame
 
 def create_money_frame(root, image_sum):
-    money_frame = Frame(root, bg=MAIN_COLOUR, padx=55, pady=45)
+    money_frame = Frame(root, bg=MAIN_COLOUR, padx=125, pady=45)
     money_frame.grid(row=0, column=1)
     money_frame_label = Label(money_frame, image=image_sum, bg=MAIN_COLOUR, width=275, height=750)
     money_frame_label.grid(row=0, column=0)
     return money_frame
+
+def remove_public_answers():
+    first_progress_bar.place_forget()
+    second_progress_bar.place_forget()
+    third_progress_bar.place_forget()
+    fourth_progress_bar.place_forget()
+    first_bar_label.place_forget()
+    second_bar_label.place_forget()
+    third_bar_label.place_forget()
+    fourth_bar_label.place_forget()
+
+def get_correct_option():
+    global current_question, first_answer, second_answer, third_answer, fourth_answer
+    correct_answer = basicqueries.get_correct_answer(current_question)[0][0]
+    if  first_answer == correct_answer:
+        return "А"
+    elif second_answer == correct_answer:
+        return "Б"
+    elif third_answer ==correct_answer:
+        return "В"
+    else:
+        return "Г"
+    
+def get_random_percentages():
+    first_number = random.randint(0,24)
+    second_number = random.randint(0,24)
+    third_number = random.randint(0,24)
+    fourth_number = 100 - (first_number + second_number + third_number)
+    return first_number, second_number, third_number, fourth_number
+
+def use_public():
+    global public_button
+    public_button.config(state='disabled', image=used_public)
+    first_progress_bar.place(x=1000, y=350)
+    second_progress_bar.place(x=1045, y=350)
+    third_progress_bar.place(x=1090, y=350)
+    fourth_progress_bar.place(x=1135, y=350)
+    
+    first_bar_label.place(x=1000, y=475)
+    second_bar_label.place(x=1045, y=475)
+    third_bar_label.place(x=1090, y=475)
+    fourth_bar_label.place(x=1135, y=475)
+
+    first_number, second_number, third_number, max_percentages = get_random_percentages()
+
+    correct_option = get_correct_option()
+    if correct_option == "А":
+        first_bar_label.config(text="А: {max_percentages}%".format(max_percentages=max_percentages))
+        second_bar_label.config(text="Б: {first_number}%".format(first_number=first_number))
+        third_bar_label.config(text="В: {second_number}%".format(second_number=second_number))
+        fourth_bar_label.config(text="Г: {third_number}%".format(third_number=third_number))
+
+        first_progress_bar.config(value=max_percentages)
+        second_progress_bar.config(value=first_number)
+        third_progress_bar.config(value=second_number)
+        fourth_progress_bar.config(value=third_number)
+
+    elif correct_option == "Б":
+        second_bar_label.config(text="Б: {max_percentages}%".format(max_percentages=max_percentages))
+        first_bar_label.config(text="А: {first_number}%".format(first_number=first_number))
+        third_bar_label.config(text="В: {second_number}%".format(second_number=second_number))
+        fourth_bar_label.config(text="Г: {third_number}%".format(third_number=third_number))
+
+        first_progress_bar.config(value=first_number)
+        second_progress_bar.config(value=max_percentages)
+        third_progress_bar.config(value=second_number)
+        fourth_progress_bar.config(value=third_number)
+
+    elif correct_option == "В":
+        third_bar_label.config(text="В: {max_percentages}%".format(max_percentages=max_percentages))
+        first_bar_label.config(text="А: {first_number}%".format(first_number=first_number))
+        second_bar_label.config(text="Б: {second_number}%".format(second_number=second_number))
+        fourth_bar_label.config(text="Г: {third_number}%".format(third_number=third_number))
+
+        first_progress_bar.config(value=first_number)
+        second_progress_bar.config(value=second_number)
+        third_progress_bar.config(value=max_percentages)
+        fourth_progress_bar.config(value=third_number)
+
+    else:
+        fourth_bar_label.config(text="Г: {max_percentages}%".format(max_percentages=max_percentages))
+        second_bar_label.config(text="Б: {first_number}%".format(first_number=first_number))
+        third_bar_label.config(text="В: {second_number}%".format(second_number=second_number))
+        first_bar_label.config(text="А: {third_number}%".format(third_number=third_number))
+
+        first_progress_bar.config(value=third_number)
+        second_progress_bar.config(value=first_number)
+        third_progress_bar.config(value=second_number)
+        fourth_progress_bar.config(value=max_percentages)
 
 def reset_timer():
     global timer_seconds
@@ -109,8 +209,7 @@ def show_timeout_popup():
         reset_timer()
     else:
         root.destroy()
-        profilepage.ProfilePage()
-        
+        profilepage.ProfilePage()      
 
 def update_timer():
     global timer_seconds
@@ -223,7 +322,7 @@ def win_game():
 
 def mark_answer(event):
     global questions_answered
-
+    remove_public_answers()
     button_marked = event.widget
     button_answer = button_marked['text']
     correct_answer = basicqueries.get_correct_answer(current_question)[0][0]
@@ -243,9 +342,6 @@ def mark_answer(event):
         # open_profile_page()
 
     print("Hello, {button}".format(button = button_answer))
-
-def change_letter_colour(changing_object, colour):
-    changing_object.config(fg=colour)
 
 if __name__ == "__main__":
 
@@ -300,7 +396,7 @@ if __name__ == "__main__":
     #Question options picture
     question_picture = PhotoImage(file='images/question.png')
 
-    #
+    #States pictures
     winning_picture = PhotoImage(file='images/winning.png')
     losing_picture = PhotoImage(file='images/losing.png')
     
@@ -313,6 +409,16 @@ if __name__ == "__main__":
     timer_seconds = TIMER_DURATION
     timer_label = Label(root, text=f"Time left: {timer_seconds} seconds", font=(None, 16), bg=MAIN_COLOUR, fg="white")
     timer_label.grid(row=1, column=0, pady=10)
+
+    first_progress_bar = Progressbar(root, orient=VERTICAL, length=100)
+    second_progress_bar = Progressbar(root, orient=VERTICAL, length=100)
+    third_progress_bar = Progressbar(root, orient=VERTICAL, length=100)
+    fourth_progress_bar = Progressbar(root, orient=VERTICAL, length=100)
+
+    first_bar_label = Label(root, text="А", font=(None,10), bg=MAIN_COLOUR, fg='white')
+    second_bar_label = Label(root, text="Б", font=(None,10), bg=MAIN_COLOUR, fg='white')
+    third_bar_label = Label(root, text="В", font=(None,10), bg=MAIN_COLOUR, fg='white')
+    fourth_bar_label = Label(root, text="Г", font=(None,10), bg=MAIN_COLOUR, fg='white')
 
     reset_timer()
 
