@@ -13,6 +13,11 @@ fourth_answer = ""
 questions_answered = 0
 new_root = None
 public_button = None
+fiftyfifty_button = None
+first_button = None
+second_button = None
+third_button = None
+fourth_button = None
 
 def create_main_window():
     root = Tk()
@@ -27,14 +32,14 @@ def create_game_frame(root):
     return game_frame
 
 def create_hints_frame(game_frame):
-    global public_button
+    global public_button, fiftyfifty_button
     hints_frame = Frame(game_frame, bg=MAIN_COLOUR, pady=35)
     hints_frame.grid(row=0, column=0)
 
     public_button = Button(hints_frame, image=unused_public, bg=MAIN_COLOUR, bd=0.5, activebackground=MAIN_COLOUR, width=110, height=65, cursor='hand1', command=use_public)
     public_button.grid(row=0, column=0, padx=10)
 
-    fiftyfifty_button = Button(hints_frame, image=unused_fiftyfifty, bg=MAIN_COLOUR, bd=0.5, activebackground=MAIN_COLOUR, width=110, height=65, cursor='hand1')
+    fiftyfifty_button = Button(hints_frame, image=unused_fiftyfifty, bg=MAIN_COLOUR, bd=0.5, activebackground=MAIN_COLOUR, width=110, height=65, cursor='hand1', command=use_fifty_fifty)
     fiftyfifty_button.grid(row=0, column=1, padx=10)
 
     callafriend_button = Button(hints_frame, image=unused_callafriend, bg=MAIN_COLOUR, bd=0.5, activebackground=MAIN_COLOUR, width=110, height=65, cursor='hand1')
@@ -49,7 +54,7 @@ def create_logo_frame(game_frame):
     return logo_frame
 
 def create_questions_frame(game_frame, first_question_package):
-    global current_question, questions_answered, first_answer, second_answer, third_answer, fourth_answer
+    global current_question, questions_answered, first_answer, second_answer, third_answer, fourth_answer, first_button, second_button, third_button, fourth_button
     questions_frame = Frame(game_frame, bg=MAIN_COLOUR, pady=35)
     questions_frame.grid(row=2, column=0)
     questions_frame_label = Label(questions_frame, image=question_picture, bg=MAIN_COLOUR, width = 950, height=300)
@@ -194,6 +199,33 @@ def use_public():
         third_progress_bar.config(value=second_number)
         fourth_progress_bar.config(value=max_percentages)
 
+def use_fifty_fifty():
+    global fiftyfifty_button, first_button, second_button, third_button, fourth_button
+    fiftyfifty_button.config(state='disabled', image=used_fiftyfifty)
+    options_to_eliminate = []
+    correct_option = get_correct_option()
+
+    if correct_option == "А":
+        options_to_eliminate = random.sample([2,3,4], 2)
+
+    elif correct_option == "Б":
+        options_to_eliminate = random.sample([1,3,4], 2)
+
+    elif correct_option == "В":
+        options_to_eliminate = random.sample([1,2,4], 2)
+
+    else:
+        options_to_eliminate = random.sample([1,2,3], 2)
+    
+    if 1 in options_to_eliminate:
+        first_button.config(state='disabled', text="")
+    if 2 in options_to_eliminate:
+        second_button.config( state='disabled', text="")
+    if 3 in options_to_eliminate:
+        third_button.config(state='disabled', text="")
+    if 4 in options_to_eliminate:
+        fourth_button.config(state='disabled', text="")
+
 def reset_timer():
     global timer_seconds
     if hasattr(root, 'timer_id'):
@@ -324,24 +356,27 @@ def mark_answer(event):
     global questions_answered
     remove_public_answers()
     button_marked = event.widget
-    button_answer = button_marked['text']
-    correct_answer = basicqueries.get_correct_answer(current_question)[0][0]
-    if button_answer == correct_answer:
-        print("Correct!")
-        questions_answered += 1
-        if questions_answered < 15:
-            reset_timer()
-            change_money_picture()
-            get_new_question()
+    if button_marked['state'] != 'disabled':
+        button_answer = button_marked['text']
+        correct_answer = basicqueries.get_correct_answer(current_question)[0][0]
+        if button_answer == correct_answer:
+            print("Correct!")
+            questions_answered += 1
+            if questions_answered < 15:
+                reset_timer()
+                change_money_picture()
+                get_new_question()
+            else:
+                win_game()
         else:
-            win_game()
+            print("Incorrect!")
+            game_over()
+            # save_progress()
+            # open_profile_page()
     else:
-        print("Incorrect!")
-        game_over()
-        # save_progress()
-        # open_profile_page()
+        pass
 
-    print("Hello, {button}".format(button = button_answer))
+    #print("Hello, {button}".format(button = button_answer))
 
 if __name__ == "__main__":
 
