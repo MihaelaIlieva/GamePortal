@@ -294,11 +294,10 @@ def reset_timer():
 def show_timeout_popup():
     choice = messagebox.askquestion("Time's Up!", "Do you want to start a new game?", icon='warning')
     if choice == 'yes':
-        #TODO: Add logic to reset the game or navigate to the new game
         try_again()
     else:
         root.destroy()
-        profilepage.ProfilePage()      
+        profilepage.ProfilePage(username, password)      
 
 def update_timer():
     global timer_seconds
@@ -375,13 +374,11 @@ def try_again():
         new_root.destroy()
 
 def back_to_profile():
-    #TODO: redirect to profilepage
     root.destroy()
-    pass
+    profilepage.ProfilePage(username, password)
 
 def game_over():
     global new_root
-    #TODO: add result to database
 
     stop_timer()
     new_root = Toplevel()
@@ -399,7 +396,6 @@ def game_over():
 
 def win_game():
     global new_root
-    #TODO: add result to database
 
     stop_timer()
     new_root = Toplevel()
@@ -415,7 +411,6 @@ def win_game():
     back_to_profile_button.pack()
 
 def save_progress():
-    # add_played_game(username, game_name, date_played, questions_answered, outcome)
     current_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     basicqueries.add_played_game(username, "become_rich", current_date, questions_answered, "none")
 
@@ -443,11 +438,8 @@ def mark_answer(event):
             print("Incorrect!")
             save_progress()
             game_over()
-            # open_profile_page()
     else:
         pass
-
-    #print("Hello, {button}".format(button = button_answer))
 
 if __name__ == "__main__":
 

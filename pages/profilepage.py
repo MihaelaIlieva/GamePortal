@@ -4,8 +4,8 @@ import loginpage
 import registerpage
 import database.basicqueries as basicqueries
 import tkinter
-import main as getrich
 import statisticspage
+from tkinter import *
 pygame.init()
 
 WIDTH, HEIGHT = 1720, 980
@@ -120,9 +120,15 @@ class ProfilePage:
         self.screen.blit(text_surface, text_rect)
 
     def open_get_rich_page(self):
-        getrich
+        # import main
+        # pygame.quit()
+        pass
 
     def open_statistics_page(self):
+        pygame.quit()
+        root = Tk()
+        statisticspage.StatisticsDisplay(root, username)
+        root.mainloop()
         pass
 
 if __name__ == "__main__":
