@@ -57,7 +57,8 @@ class ProfilePage:
         self.background = pygame.transform.scale(self.background, (WIDTH, HEIGHT))
 
         self.get_rich_button = Button("Get rich","", WIDTH // 2 - 100, HEIGHT // 2 - 30, 150, 40)
-        self.tictactoe_button = Button("TicTacToe","", WIDTH // 2 - 100, HEIGHT // 2 + 65, 150, 40)
+        self.tictactoe_button = Button("TicTacToe","", WIDTH // 2 - 100, HEIGHT // 2 + 35, 150, 40)
+        self.statistics_button = Button("Statistics","", WIDTH // 2 - 100, HEIGHT // 2 + 95, 150, 40)
 
         self.username = username
         self.password = password
@@ -77,6 +78,7 @@ class ProfilePage:
         while running:
             hover_get_rich = self.get_rich_button.rect.collidepoint(pygame.mouse.get_pos())
             hover_tictactoe = self.tictactoe_button.rect.collidepoint(pygame.mouse.get_pos())
+            hover_statistics = self.statistics_button.rect.collidepoint(pygame.mouse.get_pos())
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -96,6 +98,7 @@ class ProfilePage:
 
             self.get_rich_button.draw(self.screen, hover_get_rich)
             self.tictactoe_button.draw(self.screen, hover_tictactoe)
+            self.statistics_button.draw(self.screen, hover_statistics)
 
             pygame.display.flip()
             clock.tick(FPS)

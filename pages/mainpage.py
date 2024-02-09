@@ -88,6 +88,9 @@ class MainPage:
             pygame.display.flip()
             clock.tick(FPS)
 
+        print(basicqueries.get_all_users())
+        print(basicqueries.get_all_games())
+    
         pygame.quit()
         sys.exit()
 

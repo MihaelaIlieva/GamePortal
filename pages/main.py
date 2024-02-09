@@ -22,7 +22,7 @@ third_button = None
 fourth_button = None
 callafriend_button = None
 input_window = None
-username = ""
+username = "mihinka123"
 password = ""
 #Removed from here for safety reasons
 openai.api_key = 'my_api_key'
@@ -257,7 +257,7 @@ def use_call_a_friend():
             response_text.insert("1.0", "")
             response_text.insert("1.0", response)
             response_text.config(state='disabled')
-            
+
         except openai.error.RateLimitError:
             response_text.config(state='normal')
             response_text.insert("1.0", "")
@@ -359,16 +359,20 @@ def change_money_picture():
     create_money_frame(root, image)
 
 def try_again():
-    global questions_answered, easy_questions, new_root
+    global questions_answered, easy_questions, new_root, public_button, fiftyfifty_button, callafriend_button
+    public_button.config(state='normal', image=unused_public)
+    fiftyfifty_button.config(state='normal', image=unused_fiftyfifty)
+    callafriend_button.config(state='normal', image=unused_callafriend)
     questions_answered = 0
     random.shuffle(easy_questions)
     random.shuffle(medium_questions)
     random.shuffle(hard_questions)
     reset_timer()
-    new_question_package = easy_questions[len(easy_questions)-1]  # Get a new first question
+    new_question_package = easy_questions[len(easy_questions)-1]
     create_questions_frame(game_frame, new_question_package)
     create_money_frame(root, first_sum)
-    new_root.destroy()
+    if new_root:
+        new_root.destroy()
 
 def back_to_profile():
     #TODO: redirect to profilepage
@@ -413,7 +417,7 @@ def win_game():
 def save_progress():
     # add_played_game(username, game_name, date_played, questions_answered, outcome)
     current_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    basicqueries.add_played_game(username, "get_rich", current_date, questions_answered, "none")
+    basicqueries.add_played_game(username, "become_rich", current_date, questions_answered, "none")
 
 def mark_answer(event):
     global questions_answered, input_window
@@ -439,7 +443,6 @@ def mark_answer(event):
             print("Incorrect!")
             save_progress()
             game_over()
-            # save_progress()
             # open_profile_page()
     else:
         pass
