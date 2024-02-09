@@ -5,6 +5,7 @@ import registerpage
 import database.basicqueries as basicqueries
 import tkinter
 import main as getrich
+import statisticspage
 pygame.init()
 
 WIDTH, HEIGHT = 1720, 980
@@ -90,6 +91,8 @@ class ProfilePage:
                     elif hover_tictactoe:
                         return
                         # self.open_tictactoe_page()
+                    elif hover_statistics:
+                        self.open_statistics_page()
 
             self.screen.blit(self.background, (0, 0))
 
@@ -118,6 +121,9 @@ class ProfilePage:
 
     def open_get_rich_page(self):
         getrich
+
+    def open_statistics_page(self):
+        pass
 
 if __name__ == "__main__":
     main_page = ProfilePage(username, password)
