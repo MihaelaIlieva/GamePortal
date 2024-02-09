@@ -5,6 +5,7 @@ from database import basicqueries
 import random
 from tkinter.ttk import Progressbar
 import openai
+import datetime
 
 current_question = ""
 first_answer = ""
@@ -21,9 +22,10 @@ third_button = None
 fourth_button = None
 callafriend_button = None
 input_window = None
-#Removed for safety reasons
+username = ""
+password = ""
+#Removed from here for safety reasons
 openai.api_key = 'my_api_key'
-
 
 def create_main_window():
     root = Tk()
@@ -247,28 +249,30 @@ def use_fifty_fifty():
 def use_call_a_friend():
     global callafriend_button, input_window
     callafriend_button.config(state='disabled', image=used_callafriend)
-
     def get_response():
         user_question = question_entry.get()
-
         try:
             response = chat_with_gpt(user_question)
             response_text.config(state='normal')
             response_text.insert("1.0", "")
             response_text.insert("1.0", response)
             response_text.config(state='disabled')
-
+            
         except openai.error.RateLimitError:
             response_text.config(state='normal')
             response_text.insert("1.0", "")
             response_text.insert("1.0", "API rate limit exceeded. Please try again later.")
             response_text.config(state='disabled')
 
-    input_window = Tk()
+    input_window = Toplevel(root)
     input_window.title("Помощ от приятел")
     input_window.geometry('700x350+500+235')
     input_window.config(bg='white')
+    input_window.overrideredirect(True)
     
+    label = Label(input_window, text = "Помощ от приятел", font=(None, 16), width=35, height=3, bg='white', bd=0, fg='black')
+    label.pack()
+
     question_entry = Entry(input_window, width=50)
     question_entry.pack(pady=10)
 
@@ -291,8 +295,7 @@ def show_timeout_popup():
     choice = messagebox.askquestion("Time's Up!", "Do you want to start a new game?", icon='warning')
     if choice == 'yes':
         #TODO: Add logic to reset the game or navigate to the new game
-        # reset_game()
-        reset_timer()
+        try_again()
     else:
         root.destroy()
         profilepage.ProfilePage()      
@@ -381,6 +384,7 @@ def game_over():
     new_root.config(bg=WRONG_ANSWER_COLOUR)
     new_root.geometry('375x325+600+350')
     new_root.title("Game over")
+    new_root.overrideredirect(True)
     losing_message = Label(new_root, image=losing_picture, bd=0)
     losing_message.pack()
 
@@ -406,10 +410,17 @@ def win_game():
     back_to_profile_button = Button(new_root, text="Към профила ми", font=(None,16,'bold'), bg=WRONG_ANSWER_COLOUR, fg='white', bd=0, activebackground=WRONG_ANSWER_COLOUR, activeforeground='white', cursor='hand1', command=back_to_profile)
     back_to_profile_button.pack()
 
+def save_progress():
+    # add_played_game(username, game_name, date_played, questions_answered, outcome)
+    current_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    basicqueries.add_played_game(username, "get_rich", current_date, questions_answered, "none")
+
 def mark_answer(event):
     global questions_answered, input_window
     remove_public_answers()
-    input_window.destroy()
+    
+    if input_window != None:
+        input_window.destroy()
     button_marked = event.widget
     if button_marked['state'] != 'disabled':
         button_answer = button_marked['text']
@@ -422,9 +433,11 @@ def mark_answer(event):
                 change_money_picture()
                 get_new_question()
             else:
+                save_progress()
                 win_game()
         else:
             print("Incorrect!")
+            save_progress()
             game_over()
             # save_progress()
             # open_profile_page()
@@ -489,9 +502,6 @@ if __name__ == "__main__":
     #States pictures
     winning_picture = PhotoImage(file='images/winning.png')
     losing_picture = PhotoImage(file='images/losing.png')
-
-    #Friend picture
-    friend_picture = PhotoImage(file='images/friendpicture.png')
     
     game_frame = create_game_frame(root)
     hints_frame = create_hints_frame(game_frame)

@@ -61,8 +61,8 @@ class ProfilePage:
 
         self.username = username
         self.password = password
-        username=username
-        password=password
+        username = username
+        password = password
 
         self.text = "Welcome {username}! What will it be today?".format(username=self.username)
         self.subtext = ""

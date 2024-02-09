@@ -58,3 +58,71 @@ def get_correct_answer(question):
     connection.commit()
     connection.close()
     return result
+
+def add_played_game(username, game_name, date_played, questions_answered, outcome):
+    user_id = check_for_same_username(username)[0][0]
+    connection = sqlite3.connect('database/game_portal.db')
+    cursor = connection.cursor()
+    if game_name == "become_rich":
+        cursor.execute('''INSERT INTO games(user_id, game_name, date_played, guessed_questions) VALUES (?, ?, ?, ?, ?)''', (user_id, game_name, date_played, questions_answered))
+    else:
+        if outcome == "win":
+            cursor.execute('''INSERT INTO games(user_id, game_name, date_played, win) VALUES (?, ?, ?, ?, ?)''', (user_id, game_name, date_played, 1))
+        elif outcome == "draw":
+            cursor.execute('''INSERT INTO games(user_id, game_name, date_played, draw) VALUES (?, ?, ?, ?, ?)''', (user_id, game_name, date_played, 1))
+        elif outcome == "loss":
+            cursor.execute('''INSERT INTO games(user_id, game_name, date_played, loss) VALUES (?, ?, ?, ?, ?)''', (user_id, game_name, date_played, 1))
+        else:
+            pass
+    connection.commit()
+    connection.close()
+
+def get_high_score_questions(username):
+    user_id = check_for_same_username(username)[0][0]
+    connection = sqlite3.connect('database/game_portal.db')
+    cursor = connection.cursor()
+    cursor.execute('''SELECT MAX(guessed_questions) from games WHERE user_id=?''',(user_id,))
+    high_score_questions = cursor.fetchone()[0]
+    connection.commit()
+    connection.close()
+    return high_score_questions
+
+def get_date_of_high_score_questions(username, high_score_questions):
+    user_id = check_for_same_username(username)[0][0]
+    connection = sqlite3.connect('database/game_portal.db')
+    cursor = connection.cursor()
+    cursor.execute('''SELECT MIN(date_played) from games WHERE user_id=? AND guessed_questions=?''',(user_id, high_score_questions))
+    date_of_high_score = cursor.fetchone()[0]
+    connection.commit()
+    connection.close()
+    return date_of_high_score
+
+def get_wins(username):
+    user_id = check_for_same_username(username)[0][0]
+    connection = sqlite3.connect('database/game_portal.db')
+    cursor = connection.cursor()
+    cursor.execute('''SELECT COUNT(win) from games WHERE user_id=? AND win=?''',(user_id, 1))
+    wins = cursor.fetchone()[0]
+    connection.commit()
+    connection.close()
+    return wins
+
+def get_draws(username):
+    user_id = check_for_same_username(username)[0][0]
+    connection = sqlite3.connect('database/game_portal.db')
+    cursor = connection.cursor()
+    cursor.execute('''SELECT COUNT(draw) from games WHERE user_id=? AND draw=?''',(user_id, 1))
+    draws = cursor.fetchone()[0]
+    connection.commit()
+    connection.close()
+    return draws
+
+def get_losses(username):
+    user_id = check_for_same_username(username)[0][0]
+    connection = sqlite3.connect('database/game_portal.db')
+    cursor = connection.cursor()
+    cursor.execute('''SELECT COUNT(loss) from games WHERE user_id=? AND loss=?''',(user_id, 1))
+    losses = cursor.fetchone()[0]
+    connection.commit()
+    connection.close()
+    return losses
