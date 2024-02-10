@@ -517,3 +517,6 @@ class GetRichGame:
                 self.game_over()
         else:
             pass
+
+if __name__ == '__main__':
+    GetRichGame("nzz", "12345")
