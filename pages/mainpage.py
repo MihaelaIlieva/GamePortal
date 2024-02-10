@@ -14,6 +14,7 @@ class MainPage:
 
         self.MAIN_COLOUR = '#100235'
         self.FONT_COLOUR = '#8c198f'
+        self.FONT_COLOUR = '#ffffff'
 
         self.background_label = Label(self.root)
         self.background_label.place(x=0, y=0, relwidth=1, relheight=1)

@@ -1,187 +1,83 @@
-import pygame
-import sys
-# from ..database import basicqueries
-import database.basicqueries as basicqueries
-import mainpage
 import profilepage
-
-pygame.init()
-
-# so we can have them throught the whole process
-username = ""
-password = ""
-
-WIDTH, HEIGHT = 1720, 980
-FPS = 60
-
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-GRAY = (200, 200, 200)
-LIGHTGRAY = (235, 235, 235)
-BUTTON_COLOR = (255, 204, 235)
-HOVER_COLOR = (254, 103, 194)
-BORDER_COLOR = (55, 55, 55)
-
-font = pygame.font.Font(None, 36)
-
-class InputBox:
-
-    def __init__(self, x, y, width, height, text=''):
-        self.rect = pygame.Rect(x, y, width, height)
-        self.color = GRAY
-        self.text = text
-        self.txt_surface = font.render(text, True, self.color)
-        self.active = False
-
-    def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.rect.collidepoint(event.pos):
-                self.active = not self.active
-            else:
-                self.active = False
-            self.color = LIGHTGRAY if not self.active else GRAY
-        if event.type == pygame.KEYDOWN and self.active:
-            if event.key == pygame.K_RETURN:
-                print(self.text)
-                #TODO think if should do something when pressed enter
-            elif event.key == pygame.K_BACKSPACE:
-                self.text = self.text[:-1]
-            else:
-                self.text += event.unicode
-            self.txt_surface = font.render(self.text, True, BLACK)
-
-    def update(self):
-        width = max(200, self.txt_surface.get_width()+10)
-        self.rect.w = width
-
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect, 0)
-        pygame.draw.rect(screen, BORDER_COLOR, self.rect, 3)
-        screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
-
-    def get_text(self):
-        return self.text
-
+import database.basicqueries as basicqueries
+from tkinter import Tk, Label, PhotoImage, Button, Entry
 
 class LoginPage:
 
     def __init__(self):
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        pygame.display.set_caption("Game Portal - Login Page")
+        self.root = Tk()
+        self.root.title("Game Portal - Login Page")
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        self.root.geometry(f"{screen_width}x{screen_height}+0+0")
 
-        self.background = pygame.image.load("images/mainpagebackground.jpg")
-        self.background = pygame.transform.scale(self.background, (WIDTH, HEIGHT))
+        self.MAIN_COLOUR = '#100235'
+        self.FONT_COLOUR = '#8c198f'
+        self.FONT_COLOUR = '#ffffff'
+        
+        self.error_message = None    
 
-        self.username_input = InputBox(WIDTH//2 - 100, HEIGHT//2 - 65, 200, 40, '')
-        self.password_input = InputBox(WIDTH//2 - 100, HEIGHT//2, 200, 40, '')
-        self.login_button = Button("Login", WIDTH // 2 - 75, HEIGHT // 2 + 55, 150, 40, self.login)
-        self.text = "Please put in your credentials"
-        self.error_message = None
-        self.main_loop()
+        self.background_label = Label(self.root)
+        self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
+        self.background_image = PhotoImage(file="images/pagebackground.png")
+        self.background_label.configure(image=self.background_image)
+        
+        self.text_label = Label(self.root, text="Please put in your credentials", font=(None, 20), bd=0, bg=self.MAIN_COLOUR, fg=self.FONT_COLOUR)
+        self.text_label.place(relx=0.5, rely=0.10, anchor="center")
 
-    def main_loop(self):
-        running = True
-        clock = pygame.time.Clock()
+        self.picture_label = Label(self.root, bg=self.MAIN_COLOUR)
+        self.picture_label.place(relx=0.5, rely=0.25, anchor="center")
+        self.picture_image = PhotoImage(file="images/background_old.png")
+        self.picture_label.configure(image=self.picture_image)
 
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                self.username_input.handle_event(event)
-                self.password_input.handle_event(event)
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.login_button.rect.collidepoint(event.pos):
-                        #TODO write the method
-                        self.login()
+        self.username_label = Label(self.root, text="Username", font=(None, 14), bd=0, bg=self.MAIN_COLOUR, fg=self.FONT_COLOUR)
+        self.username_label.place(relx=0.5, rely=0.37, anchor="center")
 
-            self.username_input.update()
-            self.password_input.update()
+        self.password_label = Label(self.root, text="Password", font=(None, 14), bd=0, bg=self.MAIN_COLOUR, fg=self.FONT_COLOUR)
+        self.password_label.place(relx=0.5, rely=0.47, anchor="center")
 
-            self.screen.blit(self.background, (0, 0))
+        self.username_entry = Entry(self.root, font=(None, 14))
+        self.username_entry.place(relx=0.5, rely=0.41, anchor="center")
 
-            self.draw_text(self.text, WIDTH // 2, HEIGHT // 4)
-            self.draw_text("Username", WIDTH//2, HEIGHT//2 -85)
-            self.draw_text("Password", WIDTH//2, HEIGHT//2 - 15)
+        self.password_entry = Entry(self.root, font=(None, 14), show="*")
+        self.password_entry.place(relx=0.5, rely=0.51, anchor="center")
 
-            self.username_input.draw(self.screen)
-            self.password_input.draw(self.screen)
+        self.login_button = Button(self.root, text="Login", font=(None, 14), bg="#ffcced", activebackground="#fe67c2", command=self.login, width=10)
+        self.login_button.place(relx=0.5, rely=0.57, anchor="center")
 
-            hover_login = self.login_button.rect.collidepoint(pygame.mouse.get_pos())
-            self.login_button.draw(self.screen, hover_login)
-
-            if self.error_message:
-                self.draw_text(self.error_message, WIDTH // 2, HEIGHT // 2 + 105)
-
-            pygame.display.flip()
-            clock.tick(FPS)
-
-        pygame.quit()
-        sys.exit()
+        self.error_message_label = Label(self.root, text=self.error_message, font=(None, 14), bd=0, bg=self.MAIN_COLOUR, fg=self.FONT_COLOUR)
+        self.error_message_label.place(relx=0.5, rely=0.61, anchor="center")
+        
+        self.root.mainloop()
 
     def login(self):
-        username = self.username_input.get_text()
-        password = self.password_input.get_text()
+        username = self.username_entry.get()
+        password = self.password_entry.get()
 
-        # if there's no such username in the database
         if len(basicqueries.check_for_same_username(username)) == 0:
             self.error_message = "No such user!"
+            self.error_message_label.config(text=self.error_message)
             print("No such user!")
+
         else:
             user_id = basicqueries.check_for_same_username(username)[0][0]
             result = basicqueries.get_user_credentials(user_id)
-            # if both username and password match
+
             if result[0] == (username, password):
-                self.error_message = "Successfull login!"
-                self.update_screen()
-                pygame.time.delay(1000)
-                #TODO add real refernce here
-                profilepage.ProfilePage(username, password)
-                print("Successfull login!")
+                self.error_message = "Successful login!"
+                self.error_message_label.config(text=self.error_message)
+                print("Successful login!")
+                self.root.after(500, lambda: self.redirect_to_profilepage(username, password))
+
             else:
                 self.error_message = "Wrong password!"
+                self.error_message_label.config(text=self.error_message)
                 print("Wrong password!")
 
-    def draw_text(self, text, x, y):
-        text_surface = font.render(text, True, WHITE)
-        text_rect = text_surface.get_rect(center=(x, y))
-        self.screen.blit(text_surface, text_rect)
-
-    # for when the error message changes
-    def update_screen(self):
-        self.screen.blit(self.background, (0, 0))
-
-        self.draw_text(self.text, WIDTH // 2, HEIGHT // 4)
-        self.draw_text("Username", WIDTH//2, HEIGHT//2 - 85)
-        self.draw_text("Password", WIDTH//2, HEIGHT//2 - 15)
-
-        self.username_input.draw(self.screen)
-        self.password_input.draw(self.screen)
-
-        hover_login = self.login_button.rect.collidepoint(pygame.mouse.get_pos())
-        self.login_button.draw(self.screen, hover_login)
-
-        if self.error_message:
-            self.draw_text(self.error_message, WIDTH // 2, HEIGHT // 2 + 105)
-
-        pygame.display.flip()
-
-class Button:
-
-    def __init__(self, text, x, y, width, height, action=None):
-        self.rect = pygame.Rect(x, y, width, height)
-        self.text = text
-        self.action = action
-
-    def draw(self, screen, hover):
-        color = HOVER_COLOR if hover else BUTTON_COLOR
-        pygame.draw.rect(screen, color, self.rect)
-        pygame.draw.rect(screen, BLACK, self.rect, 2)
-        self.draw_text(screen, self.text, self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2)
-
-    def draw_text(self, screen, text, x, y):
-        text_surface = font.render(text, True, BLACK)
-        text_rect = text_surface.get_rect(center=(x, y))
-        screen.blit(text_surface, text_rect)
+    def redirect_to_profilepage(self, username, password):
+        self.root.destroy()
+        profilepage.ProfilePage(username, password)
 
 if __name__ == "__main__":
-    login_page = LoginPage()
+    app = LoginPage()
+
