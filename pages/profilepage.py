@@ -6,6 +6,9 @@ import database.basicqueries as basicqueries
 import tkinter
 import statisticspage
 from tkinter import *
+import subprocess
+import getrich
+
 pygame.init()
 
 WIDTH, HEIGHT = 1720, 980
@@ -51,6 +54,7 @@ class Button:
 class ProfilePage:
 
     def __init__(self, username, password):
+        pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Game Portal - Profile Page")
 
@@ -86,13 +90,17 @@ class ProfilePage:
                     running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if hover_get_rich:
+                        running = False
                         self.open_get_rich_page()
-                        return
                     elif hover_tictactoe:
-                        return
-                        # self.open_tictactoe_page()
+                        running = False
+                        self.open_tictactoe_page()
                     elif hover_statistics:
+                        running = False
                         self.open_statistics_page()
+
+            if running == False:
+                break
 
             self.screen.blit(self.background, (0, 0))
 
@@ -120,16 +128,20 @@ class ProfilePage:
         self.screen.blit(text_surface, text_rect)
 
     def open_get_rich_page(self):
-        # import main
+        #TODO: redirect to get rich game
+        pygame.quit()
+        getrich.GetRichGame(self.username, self.password)
+
+    def open_tictactoe_page(self):
+        #TODO: redirect to tictactoe
+        pygame.quit()
+        import tictactoepage
+        # subprocess.Popen(["python", "tictactoepage.py"])
         # pygame.quit()
-        pass
 
     def open_statistics_page(self):
         pygame.quit()
         root = Tk()
-        statisticspage.StatisticsDisplay(root, username)
+        statisticspage.StatisticsDisplay(root, self.username)
         root.mainloop()
         pass
-
-if __name__ == "__main__":
-    main_page = ProfilePage(username, password)

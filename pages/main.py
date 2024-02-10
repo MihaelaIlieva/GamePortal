@@ -441,83 +441,82 @@ def mark_answer(event):
     else:
         pass
 
-if __name__ == "__main__":
 
-    MAIN_COLOUR = '#160559'
-    QUESTIONS_COLOUR = '#233e91'
-    OPTIONS_COLOUR = '#ffb300'
-    WRONG_ANSWER_COLOUR = '#101248'
-    TIMER_DURATION = 60
+MAIN_COLOUR = '#160559'
+QUESTIONS_COLOUR = '#233e91'
+OPTIONS_COLOUR = '#ffb300'
+WRONG_ANSWER_COLOUR = '#101248'
+TIMER_DURATION = 60
 
-    questions_answered = 0
+questions_answered = 0
 
-    easy_questions = basicqueries.get_questions_by_difficulty("easy")
-    medium_questions = basicqueries.get_questions_by_difficulty("medium")
-    hard_questions = basicqueries.get_questions_by_difficulty("hard")
-    random.shuffle(easy_questions)
-    random.shuffle(medium_questions)
-    random.shuffle(hard_questions)
-    first_question_package = easy_questions[len(easy_questions)-1]
-    
-    root = create_main_window()
-    
-    #Unused hints
-    unused_public = PhotoImage(file='images/public.png')
-    unused_fiftyfifty = PhotoImage(file='images/fiftyfifty.png')
-    unused_callafriend = PhotoImage(file='images/callafriend.png')
+easy_questions = basicqueries.get_questions_by_difficulty("easy")
+medium_questions = basicqueries.get_questions_by_difficulty("medium")
+hard_questions = basicqueries.get_questions_by_difficulty("hard")
+random.shuffle(easy_questions)
+random.shuffle(medium_questions)
+random.shuffle(hard_questions)
+first_question_package = easy_questions[len(easy_questions)-1]
 
-    #Used hints
-    used_public = PhotoImage(file='images/publiccr.png')
-    used_fiftyfifty = PhotoImage(file='images/fiftyfiftycr.png')
-    used_callafriend = PhotoImage(file='images/callafriendcr.png')
+root = create_main_window()
 
-    #Main picture
-    logo_picture = PhotoImage(file='images/mainpicture.png')
+#Unused hints
+unused_public = PhotoImage(file='images/public.png')
+unused_fiftyfifty = PhotoImage(file='images/fiftyfifty.png')
+unused_callafriend = PhotoImage(file='images/callafriend.png')
 
-    #Money scale pictures
-    first_sum = PhotoImage(file='images/sb1.png')
-    second_sum = PhotoImage(file='images/sb2.png')
-    third_sum = PhotoImage(file='images/sb3.png')
-    fourth_sum = PhotoImage(file='images/sb4.png')
-    fifth_sum = PhotoImage(file='images/sb5.png')
-    sixth_sum = PhotoImage(file='images/sb6.png')
-    seventh_sum = PhotoImage(file='images/sb7.png')
-    eight_sum = PhotoImage(file='images/sb8.png')
-    ninght_sum = PhotoImage(file='images/sb9.png')
-    tenth_sum = PhotoImage(file='images/sb10.png')
-    eleventh_sum = PhotoImage(file='images/sb11.png')
-    twelfth_sum = PhotoImage(file='images/sb12.png')
-    thirteenth_sum = PhotoImage(file='images/sb13.png')
-    fourteenth_sum = PhotoImage(file='images/sb14.png')
-    fifteenth_sum = PhotoImage(file='images/sb15.png')
+#Used hints
+used_public = PhotoImage(file='images/publiccr.png')
+used_fiftyfifty = PhotoImage(file='images/fiftyfiftycr.png')
+used_callafriend = PhotoImage(file='images/callafriendcr.png')
 
-    #Question options picture
-    question_picture = PhotoImage(file='images/question.png')
+#Main picture
+logo_picture = PhotoImage(file='images/mainpicture.png')
 
-    #States pictures
-    winning_picture = PhotoImage(file='images/winning.png')
-    losing_picture = PhotoImage(file='images/losing.png')
-    
-    game_frame = create_game_frame(root)
-    hints_frame = create_hints_frame(game_frame)
-    logo_frame = create_logo_frame(game_frame)
-    questions_frame = create_questions_frame(game_frame, first_question_package)
-    money_frame = create_money_frame(root, first_sum)
+#Money scale pictures
+first_sum = PhotoImage(file='images/sb1.png')
+second_sum = PhotoImage(file='images/sb2.png')
+third_sum = PhotoImage(file='images/sb3.png')
+fourth_sum = PhotoImage(file='images/sb4.png')
+fifth_sum = PhotoImage(file='images/sb5.png')
+sixth_sum = PhotoImage(file='images/sb6.png')
+seventh_sum = PhotoImage(file='images/sb7.png')
+eight_sum = PhotoImage(file='images/sb8.png')
+ninght_sum = PhotoImage(file='images/sb9.png')
+tenth_sum = PhotoImage(file='images/sb10.png')
+eleventh_sum = PhotoImage(file='images/sb11.png')
+twelfth_sum = PhotoImage(file='images/sb12.png')
+thirteenth_sum = PhotoImage(file='images/sb13.png')
+fourteenth_sum = PhotoImage(file='images/sb14.png')
+fifteenth_sum = PhotoImage(file='images/sb15.png')
 
-    timer_seconds = TIMER_DURATION
-    timer_label = Label(root, text=f"Time left: {timer_seconds} seconds", font=(None, 16), bg=MAIN_COLOUR, fg="white")
-    timer_label.grid(row=1, column=0, pady=10)
+#Question options picture
+question_picture = PhotoImage(file='images/question.png')
 
-    first_progress_bar = Progressbar(root, orient=VERTICAL, length=100)
-    second_progress_bar = Progressbar(root, orient=VERTICAL, length=100)
-    third_progress_bar = Progressbar(root, orient=VERTICAL, length=100)
-    fourth_progress_bar = Progressbar(root, orient=VERTICAL, length=100)
+#States pictures
+winning_picture = PhotoImage(file='images/winning.png')
+losing_picture = PhotoImage(file='images/losing.png')
 
-    first_bar_label = Label(root, text="А", font=(None,10), bg=MAIN_COLOUR, fg='white')
-    second_bar_label = Label(root, text="Б", font=(None,10), bg=MAIN_COLOUR, fg='white')
-    third_bar_label = Label(root, text="В", font=(None,10), bg=MAIN_COLOUR, fg='white')
-    fourth_bar_label = Label(root, text="Г", font=(None,10), bg=MAIN_COLOUR, fg='white')
+game_frame = create_game_frame(root)
+hints_frame = create_hints_frame(game_frame)
+logo_frame = create_logo_frame(game_frame)
+questions_frame = create_questions_frame(game_frame, first_question_package)
+money_frame = create_money_frame(root, first_sum)
 
-    reset_timer()
+timer_seconds = TIMER_DURATION
+timer_label = Label(root, text=f"Time left: {timer_seconds} seconds", font=(None, 16), bg=MAIN_COLOUR, fg="white")
+timer_label.grid(row=1, column=0, pady=10)
 
-    root.mainloop()
+first_progress_bar = Progressbar(root, orient=VERTICAL, length=100)
+second_progress_bar = Progressbar(root, orient=VERTICAL, length=100)
+third_progress_bar = Progressbar(root, orient=VERTICAL, length=100)
+fourth_progress_bar = Progressbar(root, orient=VERTICAL, length=100)
+
+first_bar_label = Label(root, text="А", font=(None,10), bg=MAIN_COLOUR, fg='white')
+second_bar_label = Label(root, text="Б", font=(None,10), bg=MAIN_COLOUR, fg='white')
+third_bar_label = Label(root, text="В", font=(None,10), bg=MAIN_COLOUR, fg='white')
+fourth_bar_label = Label(root, text="Г", font=(None,10), bg=MAIN_COLOUR, fg='white')
+
+reset_timer()
+
+root.mainloop()
