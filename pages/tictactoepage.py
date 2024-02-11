@@ -5,9 +5,8 @@ from tkinter import Tk, Button, messagebox, DISABLED, NORMAL, Toplevel
 
 class TicTacToeGame:
 
-    def __init__(self, username, password):
+    def __init__(self, username):
         self.username = username
-        self.password = password
         self.MAIN_COLOUR = '#160559'
         self.root = Tk()
         self.root.title("Tic Tac Toe")
@@ -197,4 +196,4 @@ class TicTacToeGame:
                 self.player_turn = True
 
 if __name__ == '__main__':
-    TicTacToeGame("mihaela", "12345")
+    TicTacToeGame("mihaela")

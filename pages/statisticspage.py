@@ -3,8 +3,8 @@ from database import basicqueries
 
 class StatisticsDisplay:
 
-    def __init__(self, master, username):
-        self.root = master
+    def __init__(self, username):
+        self.root = Tk()
         self.username = username
         self.root.title("Statistics")
         self.root.geometry('1520x980')

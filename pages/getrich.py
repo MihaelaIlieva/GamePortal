@@ -8,9 +8,8 @@ from tkinter import Tk, Frame, Button, Label, Text, Entry, messagebox, PhotoImag
 
 class GetRichGame:
 
-    def __init__(self, username, password):
+    def __init__(self, username):
         self.username = username
-        self.password = password
 
         self.current_question = ""
         self.first_answer = ""
@@ -111,9 +110,6 @@ class GetRichGame:
 
     def get_username(self):
         return self.username
-    
-    def get_password(self):
-        return self.password
     
     def create_main_window(self):
         self.root = Tk()
@@ -519,4 +515,4 @@ class GetRichGame:
             pass
 
 if __name__ == '__main__':
-    GetRichGame("nzz", "12345")
+    GetRichGame("nzz")
