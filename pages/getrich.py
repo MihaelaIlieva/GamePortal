@@ -113,7 +113,9 @@ class GetRichGame:
     
     def create_main_window(self):
         self.root = Tk()
-        self.root.geometry('1520x980')
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        self.root.geometry(f"{screen_width}x{screen_height}+0+0")
         self.root.title("Who wants to be a millionaire")
         self.root.config(bg=self.MAIN_COLOUR)
         return self.root
@@ -451,7 +453,7 @@ class GetRichGame:
 
     def back_to_profile(self):
         self.root.destroy()
-        profilepage.ProfilePage(self.username, self.password)
+        profilepage.ProfilePage(self.username)
 
     def game_over(self):
 

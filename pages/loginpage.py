@@ -67,16 +67,16 @@ class LoginPage:
                 self.error_message = "Successful login!"
                 self.error_message_label.config(text=self.error_message)
                 print("Successful login!")
-                self.root.after(500, lambda: self.redirect_to_profilepage(username, password))
+                self.root.after(500, lambda: self.redirect_to_profilepage(username))
 
             else:
                 self.error_message = "Wrong password!"
                 self.error_message_label.config(text=self.error_message)
                 print("Wrong password!")
 
-    def redirect_to_profilepage(self, username, password):
+    def redirect_to_profilepage(self, username):
         self.root.destroy()
-        profilepage.ProfilePage(username, password)
+        profilepage.ProfilePage(username)
 
 if __name__ == "__main__":
     app = LoginPage()

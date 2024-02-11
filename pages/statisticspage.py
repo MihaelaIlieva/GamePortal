@@ -1,3 +1,4 @@
+import profilepage
 from tkinter import *
 from database import basicqueries
 
@@ -7,7 +8,9 @@ class StatisticsDisplay:
         self.root = Tk()
         self.username = username
         self.root.title("Statistics")
-        self.root.geometry('1520x980')
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        self.root.geometry(f"{screen_width}x{screen_height}+0+0")
         self.root.config(bg='#160559')
 
         self.title_font = (None, 16, "bold")
@@ -18,8 +21,13 @@ class StatisticsDisplay:
         self.sort_var = StringVar()
         self.sort_var.set(self.sort_options[0])
 
+        self.profile_page_button = Button(self.root, text="Profile page", font=(None, 14), bg="#ffcced", activebackground="#fe67c2", command=self.back_to_profile, width=15, height=2)
+        self.profile_page_button.place(relx=0.95, rely=0.03, anchor="center")
+
         self.create_widgets()
         self.display_statistics()
+
+        self.root.mainloop()
 
     def create_widgets(self):
         sort_label = Label(self.root, text="Sort By:", bg='#160559', fg='white', font=self.title_font)
@@ -110,8 +118,11 @@ class StatisticsDisplay:
                 stat_label = Label(self.main_frame, text=f"{stat_name}: {stat_value}", font=self.stats_font, bg=bg_color, fg='white', width=30, anchor="w", wraplength=275)
                 stat_label.grid(row=i, column=j+1, sticky="ew")
 
+    def back_to_profile(self):
+        self.root.destroy()
+        profilepage.ProfilePage(self.username)
+
+
 if __name__ == "__main__":
-    root = Tk()
     username = "mihinka"
-    app = StatisticsDisplay(root, username)
-    root.mainloop()
+    app = StatisticsDisplay(username)

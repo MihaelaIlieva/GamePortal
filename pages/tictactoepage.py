@@ -10,9 +10,10 @@ class TicTacToeGame:
         self.MAIN_COLOUR = '#160559'
         self.root = Tk()
         self.root.title("Tic Tac Toe")
-        self.root.geometry('1520x980')
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        self.root.geometry(f"{screen_width}x{screen_height}+0+0")
         self.root.config(bg=self.MAIN_COLOUR)
-
 
         self.player_symbol = 'X'
         self.computer_symbol = 'O'
@@ -150,7 +151,7 @@ class TicTacToeGame:
 
     def back_to_profile(self):
         self.root.destroy()
-        profilepage.ProfilePage(self.username, self.password)
+        profilepage.ProfilePage(self.username)
 
     def game_over_function(self):
         self.new_root = Toplevel()
