@@ -37,9 +37,6 @@ class TicTacToeGame:
     def get_username(self):
         return self.username
     
-    def get_password(self):
-        return self.password
-    
     def is_board_full(self):
         for row in self.board:
             for cell in row:

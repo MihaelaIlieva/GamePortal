@@ -375,8 +375,7 @@ class GetRichGame:
         if choice == 'yes':
             self.try_again()
         else:
-            self.root.destroy()
-            profilepage.ProfilePage(self.username, self.password)      
+            self.back_to_profile()    
 
     def update_timer(self):
         self.timer_label.config(text=f"Time left: {self.timer_seconds} seconds")
@@ -384,7 +383,6 @@ class GetRichGame:
             self.timer_seconds -= 1
             self.root.timer_id = self.root.after(1000, self.update_timer)
         else:
-            #add save progress
             current_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             basicqueries.add_played_game(self.username, "become_rich", current_date, self.questions_answered, "none")
             self.show_timeout_popup()
@@ -456,7 +454,6 @@ class GetRichGame:
         profilepage.ProfilePage(self.username)
 
     def game_over(self):
-
         self.stop_timer()
         self.new_root = Toplevel()
         self.new_root.config(bg=self.WRONG_ANSWER_COLOUR)

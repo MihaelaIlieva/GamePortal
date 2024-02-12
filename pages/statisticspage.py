@@ -122,7 +122,6 @@ class StatisticsDisplay:
         self.root.destroy()
         profilepage.ProfilePage(self.username)
 
-
 if __name__ == "__main__":
     username = "mihinka"
     app = StatisticsDisplay(username)
