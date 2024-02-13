@@ -1,10 +1,13 @@
 import unittest
 from tkinter import Tk
 from mainpage import MainPage
+from getrich import GetRichGame
 from loginpage import LoginPage
 from profilepage import ProfilePage
 from registerpage import RegisterPage
-from unittest.mock import patch, MagicMock
+from tictactoepage import TicTacToeGame
+from statisticspage import StatisticsDisplay
+from unittest.mock import patch, Mock, MagicMock
 
 class TestMainPage(unittest.TestCase):
 
@@ -241,6 +244,95 @@ class TestProfilePage(unittest.TestCase):
 
         mock_tk_instance.destroy.assert_called_once()
         mock_main_page.assert_called_once()
+
+
+class TestGetRichGame(unittest.TestCase):
+    pass
+
+
+class TestTicTacToeGame(unittest.TestCase):
+    @patch('tictactoepage.Tk')
+    def test_is_board_full(self, mock_tk):
+        game = TicTacToeGame("test_user")
+
+        self.assertFalse(game.is_board_full())
+
+        # Fill the board
+        for i in range(3):
+            for j in range(3):
+                game.board[i][j] = 'X'
+
+        self.assertTrue(game.is_board_full())
+
+    @patch('tictactoepage.Tk')
+    def test_has_winner(self, mock_tk):
+        game = TicTacToeGame("test_user")
+
+        self.assertFalse(game.has_winner())
+
+        game.board = [['X', 'X', 'X'],
+                      ['.', '.', '.'],
+                      ['.', '.', '.']]
+        self.assertTrue(game.has_winner())
+
+        game.board = [['O', '.', '.'],
+                      ['O', '.', '.'],
+                      ['O', '.', '.']]
+        self.assertTrue(game.has_winner())
+
+        game.board = [['.', '.', 'X'],
+                      ['.', 'X', '.'],
+                      ['X', '.', '.']]
+        self.assertTrue(game.has_winner())
+
+        game.board = [['O', '.', '.'],
+                      ['.', 'O', '.'],
+                      ['.', '.', 'O']]
+        self.assertTrue(game.has_winner())
+
+    @patch('tictactoepage.Tk')
+    def test_evaluate_state(self, mock_tk):
+        game = TicTacToeGame("test_user")
+
+        # no winner
+        self.assertEqual(game.evaluate_state(), 0)
+
+        # player wins
+        game.board = [['X', 'X', 'X'],
+                      ['.', '.', '.'],
+                      ['.', '.', '.']]
+        self.assertEqual(game.evaluate_state(), -10)
+
+        # computer wins
+        game.board = [['O', '.', '.'],
+                      ['O', '.', '.'],
+                      ['O', '.', '.']]
+        self.assertEqual(game.evaluate_state(), 10)
+
+        # draw
+        game.board = [['X', 'O', 'X'],
+                      ['O', 'O', 'X'],
+                      ['X', 'X', 'O']]
+        self.assertEqual(game.evaluate_state(), 0)
+
+    @patch('tictactoepage.Tk')
+    def test_find_best_move(self, mock_tk):
+        game = TicTacToeGame("test_user")
+
+        game.board = [['X', 'O', 'X'],
+                      ['.', 'O', '.'],
+                      ['X', '.', '.']]
+        self.assertEqual(game.find_best_move(), (2, 1))
+
+        game.board = [['X', 'X', '.'],
+                      ['O', 'O', '.'],
+                      ['.', '.', '.']]
+        self.assertEqual(game.find_best_move(), (1, 2))
+
+        game.board = [['O', '.', '.'],
+                      ['.', 'X', '.'],
+                      ['X', '.', '.']]
+        self.assertEqual(game.find_best_move(), (0, 2))
 
 
 if __name__ == '__main__':
