@@ -1,14 +1,12 @@
 import unittest
-
+from tkinter import Tk
 from mainpage import MainPage
 from loginpage import LoginPage
 from getrich import GetRichGame
-from tkinter import Tk, Toplevel
 from profilepage import ProfilePage
 from registerpage import RegisterPage
 from tictactoepage import TicTacToeGame
-from statisticspage import StatisticsDisplay
-from unittest.mock import patch, Mock, MagicMock
+from unittest.mock import patch,MagicMock
 
 class TestMainPage(unittest.TestCase):
 
@@ -252,7 +250,13 @@ class TestGetRichGame(unittest.TestCase):
     @patch('getrich.PhotoImage', spec=True)
     def setUp(self, mock_photo_image, mock_tk):
         self.game = GetRichGame("test_user")
-
+        self.game.fiftyfifty_button = MagicMock()
+        self.game.get_correct_option = MagicMock(return_value="А")
+        self.game.first_button = MagicMock()
+        self.game.second_button = MagicMock()
+        self.game.third_button = MagicMock()
+        self.game.fourth_button = MagicMock()
+    
     def test_initialization(self):
         self.assertEqual(self.game.username, "test_user")
         self.assertEqual(self.game.timer_seconds, self.game.TIMER_DURATION-1)
@@ -282,6 +286,20 @@ class TestGetRichGame(unittest.TestCase):
         initial_timer = self.game.timer_seconds
         self.game.update_timer()
         self.assertEqual(self.game.timer_seconds, initial_timer - 1)
+
+    @patch('random.sample', return_value=[2, 3])
+    def test_use_fifty_fifty(self, mock_sample):
+        self.game.use_fifty_fifty()
+
+        self.game.fiftyfifty_button.config.assert_called_once_with(state='disabled', image=self.game.used_fiftyfifty)
+
+        disabled_buttons = [self.game.second_button, self.game.third_button]
+        for button in disabled_buttons:
+            button.config.assert_called_once_with(state='disabled', text="")
+
+        normal_buttons = [self.game.first_button, self.game.fourth_button]
+        for button in normal_buttons:
+            button.config.assert_not_called()
 
 
 class TestTicTacToeGame(unittest.TestCase):
