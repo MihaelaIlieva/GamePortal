@@ -1,8 +1,9 @@
 import unittest
-from tkinter import Tk
+
 from mainpage import MainPage
-from getrich import GetRichGame
 from loginpage import LoginPage
+from getrich import GetRichGame
+from tkinter import Tk, Toplevel
 from profilepage import ProfilePage
 from registerpage import RegisterPage
 from tictactoepage import TicTacToeGame
@@ -247,7 +248,40 @@ class TestProfilePage(unittest.TestCase):
 
 
 class TestGetRichGame(unittest.TestCase):
-    pass
+    @patch('getrich.Tk')
+    @patch('getrich.PhotoImage', spec=True)
+    def setUp(self, mock_photo_image, mock_tk):
+        self.game = GetRichGame("test_user")
+
+    def test_initialization(self):
+        self.assertEqual(self.game.username, "test_user")
+        self.assertEqual(self.game.timer_seconds, self.game.TIMER_DURATION-1)
+        self.assertEqual(self.game.questions_answered, 0)
+        self.assertIsInstance(self.game.easy_questions, list)
+        self.assertIsInstance(self.game.medium_questions, list)
+        self.assertIsInstance(self.game.hard_questions, list)
+
+    def test_get_username(self):
+        self.assertEqual(self.game.get_username(), "test_user")
+
+    def test_get_correct_option(self):
+        self.game.current_question = "Какво липсва в първия телефонен указател?"
+        self.game.first_answer = "Телефонни номера"
+        self.game.second_answer = "Година на издаване"
+        self.game.third_answer = "Имена на хора"
+        self.game.fourth_answer = "Работно време"
+        self.assertEqual(self.game.get_correct_option(), "А")
+
+    def test_get_random_percentages(self):
+        percentages = self.game.get_random_percentages()
+        self.assertIsInstance(percentages, tuple)
+        self.assertEqual(len(percentages), 4)
+        self.assertEqual(sum(percentages), 100)
+
+    def test_update_timer(self):
+        initial_timer = self.game.timer_seconds
+        self.game.update_timer()
+        self.assertEqual(self.game.timer_seconds, initial_timer - 1)
 
 
 class TestTicTacToeGame(unittest.TestCase):
