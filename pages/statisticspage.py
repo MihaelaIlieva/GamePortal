@@ -1,6 +1,6 @@
 import profilepage
-from tkinter import *
 from database import basicqueries
+from tkinter import Tk, Frame, Label, Button, OptionMenu, StringVar, Canvas, Scrollbar
 
 class StatisticsDisplay:
 
@@ -62,9 +62,9 @@ class StatisticsDisplay:
             user_stats = {
                 "MaxQuestionsAnswered": basicqueries.get_high_score_questions(user[1]),
                 "First on": basicqueries.get_date_of_high_score_questions(user[1], basicqueries.get_high_score_questions(user[1])),
-                "TTTWins": basicqueries.get_wins(user[1]),
-                "TTTDraws": basicqueries.get_draws(user[1]),
-                "TTTLosses": basicqueries.get_losses(user[1])
+                "TTTWins": basicqueries.get_outcomes(user[1],"win"),
+                "TTTDraws": basicqueries.get_outcomes(user[1],"draw"),
+                "TTTLosses": basicqueries.get_outcomes(user[1],"loss")
             }
             all_users_stats[user[1]] = user_stats
 
@@ -87,9 +87,9 @@ class StatisticsDisplay:
             user_stats = {
                 "MaxQuestionsAnswered": basicqueries.get_high_score_questions(user[1]),
                 "First on": basicqueries.get_date_of_high_score_questions(user[1], basicqueries.get_high_score_questions(user[1])),
-                "TTTWins": basicqueries.get_wins(user[1]),
-                "TTTDraws": basicqueries.get_draws(user[1]),
-                "TTTLosses": basicqueries.get_losses(user[1])
+                "TTTWins": basicqueries.get_outcomes(user[1],"win"),
+                "TTTDraws": basicqueries.get_outcomes(user[1],"draw"),
+                "TTTLosses": basicqueries.get_outcomes(user[1],"loss")
             }
             all_users_stats[user[1]] = user_stats
 

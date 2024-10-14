@@ -1,7 +1,6 @@
 import loginpage
 import registerpage
 from tkinter import Tk, Label, PhotoImage, Button
-import database.basicqueries as basicqueries
 
 class MainPage:
 

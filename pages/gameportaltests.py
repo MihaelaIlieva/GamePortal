@@ -6,7 +6,7 @@ from getrich import GetRichGame
 from profilepage import ProfilePage
 from registerpage import RegisterPage
 from tictactoepage import TicTacToeGame
-from unittest.mock import patch,MagicMock
+from unittest.mock import patch, MagicMock
 
 class TestMainPage(unittest.TestCase):
 
@@ -52,8 +52,8 @@ class TestLoginPage(unittest.TestCase):
         mock_entry.return_value.get.side_effect = ['existing_user', 'correct_password']
         
         # Mocking the database behavior
-        mock_check_for_same_username.return_value = [(1,)]  # User exists
-        mock_get_user_credentials.return_value = [('existing_user', 'correct_password')]  # Correct credentials
+        mock_check_for_same_username.return_value = [(1,)]
+        mock_get_user_credentials.return_value = [('existing_user', 'correct_password')]
 
         login_page = LoginPage()
         login_page.login()
@@ -74,7 +74,7 @@ class TestLoginPage(unittest.TestCase):
         mock_entry.return_value.get.side_effect = ['nonexistent_user', 'password']
         
         # Mocking the database behavior
-        mock_check_for_same_username.return_value = []  # User does not exist
+        mock_check_for_same_username.return_value = []
 
         login_page = LoginPage()
         login_page.login()
@@ -95,8 +95,8 @@ class TestLoginPage(unittest.TestCase):
         mock_entry.return_value.get.side_effect = ['existing_user', 'wrong_password']
         
         # Mocking the database behavior
-        mock_check_for_same_username.return_value = [(1,)]  # User exists
-        mock_get_user_credentials.return_value = [('existing_user', 'correct_password')]  # Incorrect password
+        mock_check_for_same_username.return_value = [(1,)]
+        mock_get_user_credentials.return_value = [('existing_user', 'correct_password')]
 
         login_page = LoginPage()
         login_page.login()
@@ -128,16 +128,16 @@ class TestRegisterPage(unittest.TestCase):
     @patch('registerpage.Entry')
     @patch('registerpage.Label')
     @patch('registerpage.Button')
-    @patch('registerpage.PhotoImage')  # Patch PhotoImage class
-    @patch('registerpage.basicqueries.check_for_same_username')  # Patching the correct module
-    @patch('registerpage.basicqueries.add_user')  # Patching the correct module
+    @patch('registerpage.PhotoImage')
+    @patch('registerpage.basicqueries.check_for_same_username')
+    @patch('registerpage.basicqueries.add_user')
     def test_register_successful(self, mock_add_user, mock_check_for_same_username, mock_photoimage, mock_button, mock_label, mock_entry, mock_tk):
         mock_tk_instance = MagicMock()
         mock_tk.return_value = mock_tk_instance
         mock_entry.return_value.get.side_effect = ['new_user', 'new_password']
 
         # Mocking the database behavior
-        mock_check_for_same_username.return_value = False  # Username doesn't exist
+        mock_check_for_same_username.return_value = False
 
         register_page = RegisterPage()
         register_page.register()
@@ -148,16 +148,16 @@ class TestRegisterPage(unittest.TestCase):
     @patch('registerpage.Entry')
     @patch('registerpage.Label')
     @patch('registerpage.Button')
-    @patch('registerpage.PhotoImage')  # Patch PhotoImage class
-    @patch('registerpage.basicqueries.check_for_same_username')  # Patching the correct module
-    @patch('registerpage.basicqueries.add_user')  # Patching the correct module
+    @patch('registerpage.PhotoImage')
+    @patch('registerpage.basicqueries.check_for_same_username')
+    @patch('registerpage.basicqueries.add_user')
     def test_register_existing_username(self, mock_add_user, mock_check_for_same_username, mock_photoimage, mock_button, mock_label, mock_entry, mock_tk):
         mock_tk_instance = MagicMock()
         mock_tk.return_value = mock_tk_instance
         mock_entry.return_value.get.side_effect = ['existing_user', 'password']
 
         # Mocking the database behavior
-        mock_check_for_same_username.return_value = True  # Username already exists
+        mock_check_for_same_username.return_value = True
 
         register_page = RegisterPage()
         register_page.register()
@@ -168,9 +168,9 @@ class TestRegisterPage(unittest.TestCase):
     @patch('registerpage.Entry')
     @patch('registerpage.Label')
     @patch('registerpage.Button')
-    @patch('registerpage.PhotoImage')  # Patch PhotoImage class
-    @patch('registerpage.basicqueries.check_for_same_username')  # Patching the correct module
-    @patch('registerpage.basicqueries.add_user')  # Patching the correct module
+    @patch('registerpage.PhotoImage')
+    @patch('registerpage.basicqueries.check_for_same_username')
+    @patch('registerpage.basicqueries.add_user')
     def test_register_empty_fields(self, mock_add_user, mock_check_for_same_username, mock_photoimage, mock_button, mock_label, mock_entry, mock_tk):
         mock_tk_instance = MagicMock()
         mock_tk.return_value = mock_tk_instance
@@ -246,6 +246,7 @@ class TestProfilePage(unittest.TestCase):
 
 
 class TestGetRichGame(unittest.TestCase):
+
     @patch('getrich.Tk')
     @patch('getrich.PhotoImage', spec=True)
     def setUp(self, mock_photo_image, mock_tk):
@@ -309,7 +310,6 @@ class TestTicTacToeGame(unittest.TestCase):
 
         self.assertFalse(game.is_board_full())
 
-        # Fill the board
         for i in range(3):
             for j in range(3):
                 game.board[i][j] = 'X'

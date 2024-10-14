@@ -513,5 +513,6 @@ class GetRichGame:
         else:
             pass
 
+
 if __name__ == '__main__':
     GetRichGame("nzz")
